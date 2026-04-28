@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+model User {
+  id           Int           @id @default(autoincrement())
+  email        String        @unique
+  name         String
+  passwordHash String
+  role         Role          @default(USER)
+  goals        Goal[]
+  workouts     Workout[]
+  progressLogs ProgressLog[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model Goal {
+  id          Int           @id @default(autoincrement())
+  title       String
+  description String?
+  targetDate  DateTime?
+  status      String        @default("ACTIVE")
+  ownerId     Int
+  owner       User          @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  progress    ProgressLog[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model Workout {
+  id          Int      @id @default(autoincrement())
+  title       String
+  category    String
+  durationMin Int
+  ownerId     Int
+  owner       User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ProgressLog {
+  id        Int      @id @default(autoincrement())
+  note      String?
+  value     Float
+  loggedAt  DateTime @default(now())
+  ownerId   Int
+  goalId    Int
+  owner     User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  goal      Goal     @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
