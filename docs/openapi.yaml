@@ -5,7 +5,11 @@ info:
   description: REST API for FitGoal final project
 
 servers:
+  - url: https://fitgoal-api.onrender.com
+    description: Production (Render)
   - url: http://localhost:8080
+    description: Local development
+
 
 components:
   securitySchemes:
